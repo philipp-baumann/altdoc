@@ -1,0 +1,37 @@
+# Zensical configuration file
+# See https://zensical.org/docs/setup/basics/ for all available options
+
+[project]
+# Basic information
+site_name = "$ALTDOC_PACKAGE_NAME"
+site_url = "$ALTDOC_PACKAGE_URL"
+
+# Repository information
+repo_url = "$ALTDOC_PACKAGE_URL_GITHUB"
+repo_name = "$ALTDOC_PACKAGE_NAME"
+
+# Theme
+# Zensical ships two theme variants: "modern" (default) and "classic"
+# (which matches the look and feel of Material for MkDocs).
+# [project.theme]
+# variant = "classic"
+
+# Search
+# Zensical ships a built-in client-side search engine that is enabled by
+# default and works offline. No additional configuration is needed.
+# To enable search highlighting (highlighting all occurrences after
+# following a search result link), uncomment the following lines:
+# [project.theme]
+# features = ["search.highlight"]
+
+# Navigation tree
+nav = [
+    { Articles = "$ALTDOC_VIGNETTE_BLOCK" },
+    { Reference = "$ALTDOC_MAN_BLOCK" },
+    { News = "$ALTDOC_NEWS" },
+    { Changelog = "$ALTDOC_CHANGELOG" },
+    { "Code of Conduct" = "$ALTDOC_CODE_OF_CONDUCT" },
+    { License = "$ALTDOC_LICENSE" },
+    { Licence = "$ALTDOC_LICENCE" },
+    { Citation = "$ALTDOC_CITATION" },
+]
