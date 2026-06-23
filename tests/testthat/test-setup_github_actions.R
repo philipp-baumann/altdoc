@@ -17,6 +17,8 @@ test_that(".setup_github_actions works if not mkdocs", {
     content <- .readlines(".github/workflows/altdoc.yaml")
     expect_false(any(grepl("$ALTDOC_MKDOCS_START", content, fixed = TRUE)))
     expect_false(any(grepl("install mkdocs", content, fixed = TRUE)))
+    expect_false(any(grepl("$ALTDOC_ZENSICAL_START", content, fixed = TRUE)))
+    expect_false(any(grepl("install zensical", content, fixed = TRUE)))
 })
 
 test_that(".setup_github_actions works if mkdocs", {
@@ -28,4 +30,17 @@ test_that(".setup_github_actions works if mkdocs", {
     content <- .readlines(".github/workflows/altdoc.yaml")
     expect_false(any(grepl("$ALTDOC_MKDOCS_START", content, fixed = TRUE)))
     expect_true(any(grepl("install mkdocs", content, fixed = TRUE)))
+    expect_false(any(grepl("install zensical", content, fixed = TRUE)))
+})
+
+test_that(".setup_github_actions works if zensical", {
+    skip_if_not(.venv_exists())
+    create_local_package()
+    setup_docs("zensical")
+    setup_github_actions()
+    expect_true(fs::file_exists(".github/workflows/altdoc.yaml"))
+    content <- .readlines(".github/workflows/altdoc.yaml")
+    expect_false(any(grepl("$ALTDOC_ZENSICAL_START", content, fixed = TRUE)))
+    expect_true(any(grepl("install zensical", content, fixed = TRUE)))
+    expect_false(any(grepl("install mkdocs", content, fixed = TRUE)))
 })

@@ -57,6 +57,18 @@ test_that("overwrite=TRUE works: mkdocs", {
     expect_false("Cruft" %in% txt)
 })
 
+test_that("overwrite=TRUE works: zensical", {
+    skip_if_not(.venv_exists())
+    create_local_package()
+    setup_docs(tool = "zensical", path = getwd())
+    cat("Cruft", file = "altdoc/zensical.toml", append = TRUE)
+    txt <- readLines("altdoc/zensical.toml", warn = FALSE)
+    expect_true("Cruft" %in% txt)
+    setup_docs(tool = "zensical", path = getwd(), overwrite = TRUE)
+    txt <- readLines("altdoc/zensical.toml", warn = FALSE)
+    expect_false("Cruft" %in% txt)
+})
+
 test_that("quarto: README.qmd", {
     create_local_package()
     expect_false(file.exists("README.qmd"))
@@ -93,6 +105,41 @@ test_that("mkdocs: venv path can be set with ALTDOC_VENV", {
         {
             expect_no_error({
                 setup_docs("mkdocs")
+                render_docs()
+            })
+        }
+    )
+})
+
+test_that("zensical: venv path can be set with ALTDOC_VENV", {
+    skip_on_cran()
+    skip_if_offline()
+    skip_if(!.quarto_is_installed())
+
+    dir <- withr::local_tempdir()
+    create_local_package(dir = fs::path(dir, "package_dir"))
+
+    expect_error(
+        setup_docs("zensical"),
+        "needs `zensical` to be installed in a Python virtual environment"
+    )
+
+    if (.is_windows()) {
+        shell(
+            "cd .. && python -m venv my_custom_venv && my_custom_venv\\Scripts\\pip.exe install zensical -q"
+        )
+    } else {
+        system2(
+            "cd",
+            ".. && python3 -m venv my_custom_venv && my_custom_venv/bin/pip install zensical -q"
+        )
+    }
+
+    withr::with_envvar(
+        list(ALTDOC_VENV = fs::path(dir, "my_custom_venv")),
+        {
+            expect_no_error({
+                setup_docs("zensical")
                 render_docs()
             })
         }

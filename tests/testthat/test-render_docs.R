@@ -112,6 +112,50 @@ test_that("mkdocs: main files are correct", {
     expect_snapshot_file("docs/vignettes/test.md", variant = "mkdocs")
 })
 
+test_that("zensical: main files are correct", {
+    skip_on_cran()
+    skip_if_offline() # we download zensical every time
+    skip_if(.is_windows() && .on_ci(), "Windows on CI")
+    skip_if(!.quarto_is_installed())
+
+    ### setup: create a temp package using the structure of testpkg.altdoc
+    path_to_example_pkg <- fs::path_abs(test_path("examples/testpkg.altdoc"))
+    create_local_project()
+    fs::dir_delete("R")
+    fs::dir_copy(path_to_example_pkg, ".")
+    all_files <- list.files("testpkg.altdoc", full.names = TRUE)
+    for (i in all_files) {
+        fs::file_move(i, ".")
+    }
+    fs::dir_delete("testpkg.altdoc")
+
+    ### special zensical stuff
+    if (.is_windows()) {
+        shell("python3 -m venv .venv_altdoc")
+        shell(
+            ".venv_altdoc\\Scripts\\activate.bat && python3 -m pip install zensical --quiet"
+        )
+    } else {
+        system2("python3", "-m venv .venv_altdoc")
+        system2(
+            "bash",
+            "-c 'source .venv_altdoc/bin/activate && python3 -m pip install zensical --quiet'",
+            stdout = FALSE
+        )
+    }
+
+    ### generate docs
+    install.packages(".", repos = NULL, type = "source")
+    setup_docs("zensical")
+    render_docs(verbose = .on_ci())
+
+    ### test
+    expect_snapshot_file("docs/NEWS.md", variant = "zensical")
+    expect_snapshot_file("docs/man/hello_base.md", variant = "zensical")
+    expect_snapshot_file("docs/man/hello_r6.md", variant = "zensical")
+    expect_snapshot_file("docs/vignettes/test.md", variant = "zensical")
+})
+
 test_that("quarto: no error for basic workflow", {
     skip_on_cran()
     skip_if(.is_windows() && .on_ci(), "Windows on CI")
