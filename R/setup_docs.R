@@ -3,12 +3,12 @@
 #' @description
 #' Creates a subdirectory called `altdoc/` in the package root directory to
 #' store the settings files used to by one of the documentation generator
-#' utilities (`docsify`, `docute`, `mkdocs`, or `quarto_website`). The files in this folder are never
+#' utilities (`docsify`, `docute`, `mkdocs`, `zensical`, or `quarto_website`). The files in this folder are never
 #' altered automatically by `altdoc` unless the user explicitly calls
 #' `overwrite=TRUE`. They can thus be edited manually to customize the sidebar and
 #' website.
 #'
-#' @param tool String. "docsify", "docute", "mkdocs", or "quarto_website".
+#' @param tool String. "docsify", "docute", "mkdocs", "zensical", or "quarto_website".
 #' @param path Path to the package root directory.
 #' @param overwrite Logical. If TRUE, overwrite existing files. Warning: This will completely delete the settings files in the `altdoc` directory, including any customizations you may have made.
 #'
@@ -31,6 +31,9 @@
 #'   # Create mkdocs documentation
 #'   setup_docs(tool = "mkdocs")
 #'
+#'   # Create zensical documentation
+#'   setup_docs(tool = "zensical")
+#'
 #'   # Create quarto website documentation
 #'   setup_docs(tool = "quarto_website")
 #' }
@@ -40,10 +43,10 @@ setup_docs <- function(tool, path = ".", overwrite = FALSE) {
         missing(tool) ||
             !is.character(tool) ||
             length(tool) != 1 ||
-            !tool %in% c("docute", "docsify", "mkdocs", "quarto_website")
+            !tool %in% c("docute", "docsify", "mkdocs", "zensical", "quarto_website")
     ) {
         cli::cli_abort(
-            'The `tool` argument must be "docsify", "docute", "mkdocs", or "quarto_website".'
+            'The `tool` argument must be "docsify", "docute", "mkdocs", "zensical", or "quarto_website".'
         )
     }
 
@@ -70,6 +73,34 @@ setup_docs <- function(tool, path = ".", overwrite = FALSE) {
         }
         .add_gitignore(".venv_altdoc", path = path)
         .add_rbuildignore(".venv_altdoc", path = path)
+    } else if (tool == "zensical") {
+        if (!.venv_exists(path)) {
+            cli::cli_abort(
+                c(
+                    "x" = "`altdoc` needs `zensical` to be installed in a Python virtual environment. The recommended way is to use {.code uv} — see {.url https://zensical.org/docs/get-started/}. You can also install it with {.code install_zensical()} from R.",
+                    " " = "",
+                    " " = "On Linux or MacOS (recommended, using uv):",
+                    " " = "",
+                    " " = "uv venv .venv_altdoc",
+                    " " = "uv pip install --python .venv_altdoc/bin/python zensical",
+                    " " = "",
+                    " " = "On Linux or MacOS (with pip):",
+                    " " = "",
+                    " " = "python3 -m venv .venv_altdoc",
+                    " " = ".venv_altdoc/bin/pip install zensical",
+                    " " = "",
+                    " " = "On Windows (recommended, using uv):",
+                    " " = "",
+                    " " = "uv venv .venv_altdoc",
+                    " " = "uv pip install --python .venv_altdoc/Scripts/python zensical",
+                    " " = "",
+                    "i" = "You can also run {.code altdoc::install_zensical()} from R to install Zensical automatically.",
+                    "i" = "You can also set the envvar `ALTDOC_VENV` to be the path of the virtual environment to use."
+                )
+            )
+        }
+        .add_gitignore(".venv_altdoc", path = path)
+        .add_rbuildignore(".venv_altdoc", path = path)
     }
 
     # paths
@@ -90,6 +121,7 @@ setup_docs <- function(tool, path = ".", overwrite = FALSE) {
 
             file_names <- c(
                 "mkdocs.yml",
+                "zensical.toml",
                 "quarto_website.yml",
                 "docute.html",
                 "docsify.html",
@@ -145,6 +177,10 @@ setup_docs <- function(tool, path = ".", overwrite = FALSE) {
     } else if (isTRUE(tool == "mkdocs")) {
         src <- system.file("mkdocs/mkdocs.yml", package = "altdoc")
         tar <- fs::path_join(c(altdoc_dir, "mkdocs.yml"))
+        .safe_copy(src, tar, overwrite = overwrite)
+    } else if (isTRUE(tool == "zensical")) {
+        src <- system.file("zensical/zensical.toml", package = "altdoc")
+        tar <- fs::path_join(c(altdoc_dir, "zensical.toml"))
         .safe_copy(src, tar, overwrite = overwrite)
     } else if (isTRUE(tool == "quarto_website")) {
         src <- system.file(

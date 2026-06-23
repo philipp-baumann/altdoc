@@ -7,7 +7,7 @@
 setup_docs(tool, path = ".", overwrite = FALSE)
 }
 \arguments{
-\item{tool}{String. "docsify", "docute", "mkdocs", or "quarto_website".}
+\item{tool}{String. "docsify", "docute", "mkdocs", "zensical", or "quarto_website".}
 
 \item{path}{Path to the package root directory.}
 
@@ -16,7 +16,7 @@ setup_docs(tool, path = ".", overwrite = FALSE)
 \description{
 Creates a subdirectory called \verb{altdoc/} in the package root directory to
 store the settings files used to by one of the documentation generator
-utilities (\code{docsify}, \code{docute}, \code{mkdocs}, or \code{quarto_website}). The files in this folder are never
+utilities (\code{docsify}, \code{docute}, \code{mkdocs}, \code{zensical}, or \code{quarto_website}). The files in this folder are never
 altered automatically by \code{altdoc} unless the user explicitly calls
 \code{overwrite=TRUE}. They can thus be edited manually to customize the sidebar and
 website.
@@ -77,6 +77,9 @@ if (interactive()) {
 
   # Create mkdocs documentation
   setup_docs(tool = "mkdocs")
+
+  # Create zensical documentation
+  setup_docs(tool = "zensical")
 
   # Create quarto website documentation
   setup_docs(tool = "quarto_website")

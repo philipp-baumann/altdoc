@@ -51,6 +51,17 @@ jobs:
       #   run: |
       #     python3 -m pip install mkdocs-material   # install material theme
       $ALTDOC_MKDOCS_END
+
+      $ALTDOC_ZENSICAL_START
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install Zensical
+        run: |
+          uv venv .venv_altdoc
+          uv pip install --python .venv_altdoc/bin/python zensical
+      $ALTDOC_ZENSICAL_END
+
       - name: Dependencies
         run: ./run.sh install_all
 

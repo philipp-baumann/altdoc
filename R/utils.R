@@ -79,6 +79,9 @@
     fn <- fs::path_join(c(path, "altdoc", "mkdocs.yml"))
     mkdocs <- fs::file_exists(fn)
 
+    fn <- fs::path_join(c(path, "altdoc", "zensical.toml"))
+    zensical <- fs::file_exists(fn)
+
     fn <- fs::path_join(c(path, "altdoc", "docsify.md"))
     docsify <- fs::file_exists(fn)
 
@@ -88,12 +91,12 @@
     fn <- fs::path_join(c(path, "altdoc", "quarto_website.yml"))
     quarto_website <- fs::file_exists(fn)
 
-    if (sum(c(mkdocs, docsify, docute, quarto_website)) == 0) {
+    if (sum(c(mkdocs, zensical, docsify, docute, quarto_website)) == 0) {
         cli::cli_abort(
             "No documentation tool detected. Please run the {.code setup_docs()} function.",
             .envir = parent.frame(sys.nframe() - 1)
         )
-    } else if (sum(c(mkdocs, docsify, docute, quarto_website)) > 1) {
+    } else if (sum(c(mkdocs, zensical, docsify, docute, quarto_website)) > 1) {
         cli::cli_abort(
             "Settings detected for multiple output formats in `altdoc/`. Please remove all but one or run `setup_docs()` with `overwrite=TRUE`.",
             .envir = parent.frame(sys.nframe() - 1)
@@ -102,6 +105,9 @@
 
     if (mkdocs) {
         return("mkdocs")
+    }
+    if (zensical) {
+        return("zensical")
     }
     if (docsify) {
         return("docsify")

@@ -18,7 +18,7 @@
             files <- c(files, fn)
         }
 
-        files <- files[!grepl("docute.html$|docsify.md$|mkdocs.yml$", files)]
+        files <- files[!grepl("docute.html$|docsify.md$|mkdocs.yml$|zensical.toml$", files)]
 
         # docs/* files are mutable and should be overwritten
         if (grepl("^quarto", tool)) {
@@ -35,6 +35,7 @@
         docsify = "docsify.md",
         docute = "docute.html",
         mkdocs = "mkdocs.yml",
+        zensical = "zensical.toml",
         quarto_website = "quarto_website.yml"
     )
     fn <- fs::path_join(c(path, "altdoc", fn))
@@ -47,6 +48,7 @@
         docsify = .sidebar_vignettes_docsify,
         docute = .sidebar_vignettes_docute,
         mkdocs = .sidebar_vignettes_mkdocs,
+        zensical = .sidebar_vignettes_zensical,
         quarto_website = .sidebar_vignettes_quarto_website
     )
     settings <- vignettes(sidebar = settings, path = path)
@@ -56,6 +58,7 @@
         docsify = .sidebar_man_docsify,
         docute = .sidebar_man_docute,
         mkdocs = .sidebar_man_mkdocs,
+        zensical = .sidebar_man_zensical,
         quarto_website = .sidebar_man_quarto_website
     )
     settings <- man(settings, path)
@@ -65,6 +68,7 @@
         docsify = .finalize_docsify,
         docute = .finalize_docute,
         mkdocs = .finalize_mkdocs,
+        zensical = .finalize_zensical,
         quarto_website = .finalize_quarto_website
     )
     settings <- finalize(settings, path, verbose, freeze)

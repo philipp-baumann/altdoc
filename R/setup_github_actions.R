@@ -27,12 +27,21 @@ setup_github_actions <- function(path = ".") {
     tar <- fs::path_join(c(path, ".github/workflows/altdoc.yaml"))
     fs::file_copy(src, tar)
 
-    # Deal with mkdocs installation in workflow
+    # Deal with mkdocs/zensical installation in workflow
     tool <- .doc_type(path)
     workflow <- .readlines(tar)
     start <- grep("\\$ALTDOC_MKDOCS_START", workflow)
     end <- grep("\\$ALTDOC_MKDOCS_END", workflow)
     if (tool == "mkdocs") {
+        workflow <- workflow[-c(start, end)]
+    } else {
+        workflow <- workflow[-(start:end)]
+    }
+
+    # Deal with zensical installation in workflow
+    start <- grep("\\$ALTDOC_ZENSICAL_START", workflow)
+    end <- grep("\\$ALTDOC_ZENSICAL_END", workflow)
+    if (tool == "zensical") {
         workflow <- workflow[-c(start, end)]
     } else {
         workflow <- workflow[-(start:end)]
